@@ -7,6 +7,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Nocage Waitlist",
   description: "Join the future of Nocage.",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({

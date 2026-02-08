@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen w-full overflow-x-hidden overflow-y-auto flex flex-col items-center justify-start pt-8 px-4 pb-4 md:justify-center md:p-4">
+    <main className="relative min-h-screen w-full overflow-x-hidden overflow-y-auto flex flex-col items-center justify-start pt-8 px-4 md:justify-center md:p-4">
       {/* Dynamic Background */}
       <div
         className="absolute inset-0 z-0 bg-cover bg-center animate-move-background"
