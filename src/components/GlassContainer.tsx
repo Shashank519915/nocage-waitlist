@@ -56,7 +56,7 @@ const GlassFilter = () => (
             <feDisplacementMap
                 in="SourceGraphic"
                 in2="softMap"
-                scale="200"
+                scale="400"
                 xChannelSelector="R"
                 yChannelSelector="G"
             />
@@ -104,7 +104,7 @@ const GlassFilter = () => (
             <feDisplacementMap
                 in="SourceGraphic"
                 in2="softMap"
-                scale="200"
+                scale="400"
                 xChannelSelector="R"
                 yChannelSelector="G"
             />
