@@ -50,58 +50,52 @@ export async function POST(request: Request) {
             );
         }
 
-        // 3. Sync to Sheet.io (Best Effort)
-        if (SHEET_DB_URL) {
-            try {
-                const sheetRes = await fetch(SHEET_DB_URL, {
-                    method: "POST",
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        data: [
-                            {
-                                email,
-                                phone: `'${phone}`, // Prefix with ' to prevent Google Sheets from treating as formula
-                                date: new Date().toISOString(),
+        // 3. Run Non-Critical Integrations in Parallel (Sheet.io & Resend)
+        // We use allSettled so one failing doesn't stop the other.
+        // Failures here do NOT affect the success response to the user.
+        await Promise.allSettled([
+            (async () => {
+                if (SHEET_DB_URL) {
+                    try {
+                        const sheetRes = await fetch(SHEET_DB_URL, {
+                            method: "POST",
+                            headers: {
+                                "Accept": "application/json",
+                                "Content-Type": "application/json",
                             },
-                        ],
-                    }),
-                });
-
-                const sheetText = await sheetRes.text();
-                if (!sheetRes.ok) {
-                    console.warn("Sheet.io Sync Error Body:", sheetText);
+                            body: JSON.stringify({
+                                data: [{
+                                    email,
+                                    phone: `'${phone}`,
+                                    date: new Date().toISOString(),
+                                }],
+                            }),
+                        });
+                        const sheetText = await sheetRes.text();
+                        if (!sheetRes.ok) console.warn("Sheet.io Sync Error:", sheetText);
+                    } catch (e) {
+                        console.warn("Sheet.io Sync Failed:", e);
+                    }
                 }
-
-            } catch (sheetError) {
-                console.warn("Sheet.io Sync Failed:", sheetError);
-                // We do not fail the request if Sheet.io fails, as Supabase is the source of truth.
-            }
-        }
-
-        // 4. Send Welcome Email via Resend (Best Effort)
-        const RESEND_API_KEY = process.env.RESEND_API_KEY;
-        if (RESEND_API_KEY) {
-            try {
-                const resend = new Resend(RESEND_API_KEY);
-                const { error: emailError } = await resend.emails.send({
-                    from: "Nocage <onboarding@resend.dev>", // Replace with your verified domain in production
-                    to: email,
-                    subject: "Welcome to Nocage - Access the Future",
-                    react: WelcomeEmail({ userFirstname: "Future Member" }),
-                });
-
-                if (emailError) {
-                    console.error("Resend Email Error:", emailError);
+            })(),
+            (async () => {
+                const RESEND_API_KEY = process.env.RESEND_API_KEY;
+                if (RESEND_API_KEY) {
+                    try {
+                        const resend = new Resend(RESEND_API_KEY);
+                        const { error } = await resend.emails.send({
+                            from: "Nocage <onboarding@resend.dev>",
+                            to: email,
+                            subject: "Welcome to Nocage - Access the Future",
+                            react: WelcomeEmail({ userFirstname: "Future Member" }),
+                        });
+                        if (error) console.error("Resend Email Error:", error);
+                    } catch (e) {
+                        console.error("Resend Integration Error:", e);
+                    }
                 }
-            } catch (error) {
-                console.error("Resend Integration Error:", error);
-            }
-        } else {
-            console.warn("RESEND_API_KEY is not set. Skipping email sending.");
-        }
+            })()
+        ]);
 
         return NextResponse.json(
             { message: "Successfully joined the waitlist!" },

@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen w-full overflow-x-hidden overflow-y-auto flex flex-col items-center justify-center p-4">
+    <main className="relative min-h-screen w-full overflow-x-hidden overflow-y-auto flex flex-col items-center justify-start pt-8 px-4 pb-4 md:justify-center md:p-4">
       {/* Dynamic Background */}
       <div
         className="absolute inset-0 z-0 bg-cover bg-center animate-move-background"
@@ -24,7 +24,7 @@ export default function Home() {
         whileHover={{ scale: 1.01 }}
         whileTap={{ scale: 0.98 }}
         transition={{ duration: 0.3 }}
-        className="relative z-10 w-full max-w-md flex flex-col items-center gap-10"
+        className="relative z-10 w-full max-w-md flex flex-col items-center gap-6 md:gap-10"
       >
 
         {/* Library Based Glass Card */}
