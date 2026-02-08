@@ -2,6 +2,8 @@ import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import WelcomeEmail from "@/emails/WelcomeEmail";
+import { z } from "zod";
+// import { rateLimit } from "@/lib/rate-limit"; // Uncomment for rate limiting
 
 // Initialize Supabase Client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -12,16 +14,40 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 // Sheet.io Configuration
 const SHEET_DB_URL = process.env.SHEET_DB_URL;
 
+// Zod Schema for Validation
+const schema = z.object({
+    email: z.string().email("Invalid email address").max(100),
+    phone: z.string().min(5, "Phone number is too short"),
+});
+
+// const limiter = rateLimit({ interval: 60 * 1000, uniqueTokenPerInterval: 500 }); // 1 minute window
+
 export async function POST(request: Request) {
     try {
-        const { email, phone } = await request.json();
+        const body = await request.json();
+        const result = schema.safeParse(body);
 
-        if (!email || !phone) {
+        if (!result.success) {
             return NextResponse.json(
-                { message: "Email and Phone are required." },
+                { message: result.error.issues[0].message },
                 { status: 400 }
             );
         }
+
+        const { email, phone } = result.data;
+
+        /* 
+        // Rate Limiting (Uncomment to Enable)
+        try {
+            const ip = request.headers.get("x-forwarded-for") || "127.0.0.1";
+            await limiter.check(5, ip); // 5 requests per minute per IP
+        } catch {
+            return NextResponse.json(
+                { message: "Too many requests. Please try again later." },
+                { status: 429 }
+            );
+        }
+        */
 
         // 1. Check for duplicates in Supabase
         const { data: existingUser, error: searchError } = await supabase
