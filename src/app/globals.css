@@ -25,6 +25,15 @@
 
 }
 
+/* Global Reset to prevent pulling/scrolling on mobile */
+html,
+body {
+  overflow: hidden;
+  height: 100%;
+  overscroll-behavior: none;
+  /* Disables pull-to-refresh/rubber-banding */
+}
+
 /* Custom Glass Scrollbar */
 .glass-scrollbar::-webkit-scrollbar {
   width: 4px;
