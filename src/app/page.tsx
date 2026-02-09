@@ -27,42 +27,49 @@ export default function Home() {
         className="relative z-10 w-full max-w-md flex flex-col items-center gap-6 md:gap-10"
       >
 
-        {/* Library Based Glass Card */}
-        <LiquidGlassCard
-          padding="1.5rem"
-          borderRadius="24px"
-          blur={20}
-          backgroundColor="rgba(255, 255, 255, 0.05)"
+        <div
+          className="relative rounded-[24px] overflow-hidden backdrop-blur-[20px]"
+          style={{
+            WebkitBackdropFilter: "blur(20px)", // Fix for iOS glass effect
+            transform: "translate3d(0,0,0)", // Hardware acceleration
+          }}
         >
-          <div className="flex flex-col items-center gap-6 w-full max-w-sm mx-auto">
-            {/* Logo moved inside */}
-            <div className="relative w-60 h-20 hover:scale-105 transition-transform duration-500 flex items-center justify-center">
-              {/* Density/Glow behind logo */}
-              <div
-                className="absolute w-[120%] h-[150%] -z-10 blur-2xl opacity-60 rounded-full"
-                style={{
-                  background: "radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%)"
-                }}
-              />
-              <Image
-                src="/logo1.png"
-                alt="Nocage Logo"
-                fill
-                className="object-contain drop-shadow-2xl"
-                priority
-                sizes="240px"
-              />
-            </div>
+          <LiquidGlassCard
+            padding="1.5rem"
+            borderRadius="24px"
+            blur={20}
+            backgroundColor="rgba(255, 255, 255, 0.05)"
+          >
+            <div className="flex flex-col items-center gap-6 w-full max-w-sm mx-auto">
+              {/* Logo moved inside */}
+              <div className="relative w-60 h-20 hover:scale-105 transition-transform duration-500 flex items-center justify-center">
+                {/* Density/Glow behind logo */}
+                <div
+                  className="absolute w-[120%] h-[150%] -z-10 blur-3xl opacity-80 rounded-full"
+                  style={{
+                    background: "radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%)"
+                  }}
+                />
+                <Image
+                  src="/logo1.png"
+                  alt="Nocage Logo"
+                  fill
+                  className="object-contain drop-shadow-2xl"
+                  priority
+                  sizes="240px"
+                />
+              </div>
 
-            {/* Header Text */}
-            <div className="text-center space-y-2 relative z-50">
-              <h1 className="text-3xl font-bold text-white tracking-tight">Access the Future</h1>
-              <p className="text-white/80 text-sm font-light">Join the exclusive waitlist for Nocage.</p>
-            </div>
+              {/* Header Text */}
+              <div className="text-center space-y-2 relative z-50">
+                <h1 className="text-3xl font-bold text-white tracking-tight">Access the Future</h1>
+                <p className="text-white/80 text-sm font-light">Join the exclusive waitlist for Nocage.</p>
+              </div>
 
-            <WaitlistForm />
-          </div>
-        </LiquidGlassCard>
+              <WaitlistForm />
+            </div>
+          </LiquidGlassCard>
+        </div>
 
         {/* Custom Implementation (Commented Out) */}
         {/*
