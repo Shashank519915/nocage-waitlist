@@ -49,6 +49,8 @@ export default function Home() {
                 alt="Nocage Logo"
                 fill
                 className="object-contain drop-shadow-2xl"
+                priority
+                sizes="240px"
               />
             </div>
 
